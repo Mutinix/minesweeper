@@ -11,7 +11,7 @@ require 'yaml'
 # 1 - fringe square
 
 class Minesweeper
-  attr_accessor :board, :game_over
+  attr_accessor :board, :game_over, :time
 
   @@adjacent = [[0,-1], [-1,-1], [-1,0], [-1,1],
                 [0,1], [1,1], [1,0], [1,-1]]
@@ -25,6 +25,7 @@ class Minesweeper
 
     @game_over = 0
     @board = Array.new
+    @time = []
 
     @mine_locs = rand_n(mines, @size**2)
     @mine_locs.map! do |mine_loc|
@@ -51,6 +52,11 @@ class Minesweeper
     file = File.new(filename, "w")
     file.write(@board.to_yaml)
     file.close
+
+    difftime = Time.new - @time[0]
+    timefile = File.new(filename + "-time", "w")
+    timefile.write(difftime.to_yaml)
+    timefile.close
   end
 
   def load_from_file
@@ -59,9 +65,14 @@ class Minesweeper
     file = File.open(filename, "r")
     @board = YAML::load(file)
     file.close
+
+    timefile = File.open(filename + "-time", "r")
+    @time[0] = Time.new - YAML::load(timefile)
   end
 
   def play
+    @time[0] = Time.new
+
     until done?
       print gen_board
       puts "Do you want to (1) reveal, (2) flag, (3) unflag, (4) save your game, (5) load your game, or (6) quit?"
@@ -87,8 +98,10 @@ class Minesweeper
       end
     end
 
+    @time[1] = Time.new
+
     if @game_over == 1
-      puts "You win!"
+      puts "You win! It took #{@time[1]-@time[0]} seconds!"
     else
       puts "You lose!"
     end
