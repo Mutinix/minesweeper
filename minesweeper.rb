@@ -42,6 +42,8 @@ class Minesweeper
   def play
     until done?
       print_board
+      print @board
+      print "\n"
       puts "Do you want to (1) reveal, (2) flag, or (3) unflag?"
       move = gets.to_i
       puts "Which square? (ex: '1,1')"
@@ -56,6 +58,14 @@ class Minesweeper
         unflag(x,y)
       end
     end
+
+    if @game_over == 1
+      puts "You win!"
+    else
+      puts "You lose!"
+    end
+
+    print_board
   end
 
   def flag(x,y)
@@ -64,6 +74,8 @@ class Minesweeper
       @board[x][y] = :F
     when :* # incorrectly flagged
       @board[x][y] = :f
+    else
+      puts "You can't flag this square"
     end
   end
 
@@ -131,7 +143,9 @@ class Minesweeper
   end
 
   def done?
-    if @board.flatten.any? { |square| [:m, :f].include?(square)}
+    if @game_over != 0
+      true
+    elsif @board.flatten.any? { |square| [:m, :f].include?(square)}
       # there are remaining, unrevealed mines
       false
     else # game is over
@@ -156,4 +170,6 @@ class Minesweeper
   end
 end
 
-Minesweeper.new.play
+if __FILE__ == $PROGRAM_NAME
+  Minesweeper.new.play
+end
