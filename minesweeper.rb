@@ -69,39 +69,34 @@ class Minesweeper
     if @board[x][y] == :m
       @game_over = -1 if first
       return
-    else
+    else # recursively reveal that square and all adjacent ones
       adj_mine_locs = adjacent_mines(x,y)
       if adj_mine_locs.empty?
         @board[x][y] = :_
-        @@adjacent.each do |adj_arr|
+        @@adjacent.each do |i, j|
           # only recurse on unexplored squares
-          if @board[x+adj_arr[0]][y+adj_arr[1]] == "*"
-            reveal(x+adj_arr[0], y+adj_arr[1], false)
+          if valid_square?(x+i,y+j) && @board[x+i][y+j] == :*
+            reveal(x+i, y+j, false)
           end
         end
       else
         @board[x][y] = adj_mine_locs.length
       end
     end
-    #else recursively reveal that square and all adjacent ones
+
   end
 
   def adjacent_mines(x,y)
-    adj_mine_locs = []
-    @@adjacent.each do |adj_arr|
-      i,j = adj_arr
-
-      puts "checking location #{x+i},#{y+j}"
-      #if x+i < size && y+j < size &&
-      #  x+i >= 0 && y+j >= 0
-      if (0...@size).member?(x+i) &&
-         (0...@size).member?(y+j) &&
-         @board[x+i][y+j] == :m
-
-        adj_mine_locs << [x+i, y+j]
-      end
+    @@adjacent.select do |i,j|
+      valid_square?(x+i,y+j) &&
+      @board[x+i][y+j] == :m
     end
-    adj_mine_locs
+  end
+
+  def valid_square?(x,y)
+    ![x,y].collect do |coord|
+      (0...@size).member?(coord)
+    end.include?(false)
   end
 
   def print_board
