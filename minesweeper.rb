@@ -4,7 +4,8 @@ require 'set'
 # * - unexplored
 # m - unrevealed mine
 # M - revealed mine
-# F - flagged
+# F - flagged correctly
+# f - flagged incorrectly
 # _ - interior
 # 1 - fringe square
 
@@ -51,6 +52,12 @@ class Minesweeper
   end
 
   def flag(x,y)
+    case @board[x][y]
+    when :m # correctly flagged
+      @board[x][y] = :F
+    when :* # incorrectly flagged
+      @board[x][y] = :f
+    end
   end
 
   def reveal(x,y)
