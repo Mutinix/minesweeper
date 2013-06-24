@@ -5,11 +5,18 @@ class Minesweeper
 
   def initialize(size=9, mines=10)
     @board = Array.new
+    mine_locs = rand_n(mines, size**2)
 
     size.times do |i|
       @board << []
       size.times do |j|
-        @board.last << :*
+        if mine_locs.include?((i+1)*size + (j+1))
+          symbol = :M
+        else
+          symbol = :*
+        end
+
+        @board.last << symbol
       end
     end
   end
@@ -17,10 +24,18 @@ class Minesweeper
   def print_board
     @board.each do |row|
       row.each do |square|
-        print square
+        if done? || square != :M
+          disp_sq = square
+        else square == :M
+          disp_sq = :*
+        end
+        print disp_sq
       end
       print "\n"
     end
+  end
+
+  def done?
   end
 
   private
