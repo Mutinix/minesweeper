@@ -15,6 +15,7 @@ require 'yaml'
 #                   => 7 = black; 8 = grey
 
 class Minesweeper
+  # REV: Do these really need to be readable/writable outside the class?
   attr_accessor :board, :game_over, :time
 
   @@adjacent = [[0,-1], [-1,-1], [-1,0], [-1,1],
@@ -22,20 +23,24 @@ class Minesweeper
 
   @@num_mines = {9 => 10, 16 => 40}
 
+  # REV: Initialize is quite long, 28 lines.
   def initialize
     puts "Select a grid size: 9 or 16"
     @size = gets.to_i
     mines = @@num_mines[@size]
 
+    # REV: Why not true / false?
     @game_over = 0
     @board = Array.new
     @time = []
-
+    
+    # REV: Could be a method. "A method should only do one thing." Maybe place_mines
     @mine_locs = rand_n(mines, @size**2)
     @mine_locs.map! do |mine_loc|
       [mine_loc / @size, mine_loc % @size]
     end
 
+    # REV: Could be a method. Maybe generate_board
     @size.times do |i|
       @board << []
       @size.times do |j|
@@ -57,6 +62,8 @@ class Minesweeper
     file.write(@board.to_yaml)
     file.close
 
+    # REV: Does this need to be a different file? Can you instead save the time difference in the object,
+    # then write the whole object to file with .to_yaml ?
     difftime = Time.new - @time[0]
     timefile = File.new(filename + "-time", "w")
     timefile.write(difftime.to_yaml)
@@ -74,6 +81,7 @@ class Minesweeper
     @time[0] = Time.new - YAML::load(timefile)
   end
 
+  # REV: Long method.
   def play
     @time[0] = Time.new
 
@@ -83,9 +91,12 @@ class Minesweeper
       move = gets.to_i
       unless move > 3
         puts "Which square? (ex: '1,1')"
+        # REV: Apparently this works without chomping, though I don't know why.
         x,y = gets.split(",").map{|coord| coord.to_i}
       end
 
+      # REV: I like this, very obvious what it's trying to do.
+      # REV: Flag and unflag could be one method that just toggles the flag.
       case move
       when 1
         reveal(x,y)
@@ -103,14 +114,17 @@ class Minesweeper
     end
 
     @time[1] = Time.new
-
+    
+    
+    # REV: This could be a method, since it's separate from "playing"
     if @game_over == 1
       puts "You win! It took #{@time.reverse.inject(:-)} seconds!"
       highscores
     else
       puts "You lose!"
     end
-
+    
+    # REV: This as well.
     print gen_board
     disp_highscores
   end
@@ -209,7 +223,9 @@ class Minesweeper
       (0...@size).member?(coord)
     end.include?(false)
   end
-
+  
+  
+  # REV: Very long method, 33 lines. Break into submethods.
   def gen_board
     board_str = "   "
     @size.times {|i| board_str += " %2d" % i}
@@ -217,6 +233,7 @@ class Minesweeper
     board_str += "─" * (@size*3)
     board_str += "┐\n"
 
+    # REV: Perhaps separate methods for revealing after the game is over, and while the game is occurring?
     @board.each_with_index do |row,index|
       board_str += "%2d │" % index
       row.each_with_index do |square, tile_pos|
@@ -249,6 +266,8 @@ class Minesweeper
   end
 
   def done?
+    # REV: Having both @game_over and done? methods is odd, it _sounds_ like they should do the same thing.
+    # REV: Doubly nested conditionals like this are confusing, I again may split into separate methods (appropriately named) so you know what each one is doing.
     if @game_over != 0
       true
     elsif @board.flatten.any? { |square| [:m, :f].include?(square)}
@@ -264,6 +283,8 @@ class Minesweeper
       true
     end
   end
+  
+  # REV: Why is this the only private method? Surely some of the others could be as well.
 
   private
 
