@@ -1,4 +1,5 @@
 require 'set'
+require 'yaml'
 
 # types of squares
 # * - unexplored
@@ -39,15 +40,31 @@ class Minesweeper
     end
   end
 
+  def write_to_file
+    puts "Enter filename"
+    filename = gets.chomp
+    file = File.new(filename, "w")
+    file.write(@board.to_yaml)
+    file.close
+  end
+
+  def load_from_file
+    puts "Enter save file name:"
+    filename = gets.chomp
+    file = File.open(filename, "r")
+    @board = YAML::load(file)
+    file.close
+  end
+
   def play
     until done?
       print_board
-      print @board
-      print "\n"
-      puts "Do you want to (1) reveal, (2) flag, or (3) unflag?"
+      puts "Do you want to (1) reveal, (2) flag, (3) unflag, (4) save your game, (5) load your game, or (6) quit?"
       move = gets.to_i
-      puts "Which square? (ex: '1,1')"
-      x,y = gets.split(",").map{|coord| coord.to_i}
+      unless move > 3
+        puts "Which square? (ex: '1,1')"
+        x,y = gets.split(",").map{|coord| coord.to_i}
+      end
 
       case move
       when 1
@@ -56,6 +73,12 @@ class Minesweeper
         flag(x,y)
       when 3
         unflag(x,y)
+      when 4
+        write_to_file
+      when 5
+        load_from_file
+      when 6
+        return
       end
     end
 
