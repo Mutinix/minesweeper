@@ -21,6 +21,22 @@ class Minesweeper
     end
   end
 
+  def play
+    until done?
+      puts "Do you want to (1) reveal or (2) flag?"
+      move = gets.to_i
+      puts "Which square? (ex: '1,1')"
+      x,y = gets.split(",").map{|coord| coord.to_i}
+
+      case move
+      when 1
+        reveal(x,y)
+      when 2
+        flag(x,y)
+      end
+    end
+  end
+
   def print_board
     @board.each do |row|
       row.each do |square|
