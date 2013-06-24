@@ -12,6 +12,9 @@ require 'set'
 class Minesweeper
   attr_accessor :board, :game_over
 
+  @@adjacent = [[0,-1], [-1,-1], [-1,0], [-1,1],
+                [0,1], [1,1], [1,0], [1,-1]]
+
   def initialize(size=9, mines=10)
     @game_over = 0
     @board = Array.new
@@ -60,7 +63,39 @@ class Minesweeper
     end
   end
 
-  def reveal(x,y)
+  def reveal(x, y, first=true)
+    #if mine then end
+    if @board[x][y] == :m
+      @game_over = -1 if first
+      return
+    else
+      adj_mine_locs = adjacent_mines(x,y)
+      if adj_mine_locs.empty?
+        @board[x][y] = :_
+        @@adjacent.each do |adj_arr|
+          # only recurse on unexplored squares
+          if @board[x+adj_arr[0]][y+adj_arr[1]] == "*"
+            puts "RECURSED"
+            reveal(x+adj_arr[0], y+adj_arr[1], false)
+          end
+        end
+      else
+        @board[x][y] = adj_mine_locs.length.to_s
+      end
+    end
+    #else recursively reveal that square and all adjacent ones
+  end
+
+  def adjacent_mines(x,y)
+    adj_mine_locs = []
+    @@adjacent.each do |adj_arr|
+      i,j = adj_arr
+
+      if @board[x+i][y+j] == :m
+        adj_mine_locs << [x+i, y+j]
+      end
+    end
+    adj_mine_locs
   end
 
   def print_board
