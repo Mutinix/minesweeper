@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'rainbow'
 require 'set'
 require 'yaml'
 
@@ -225,15 +226,15 @@ class Minesweeper
           end
         # always show the same symbol for flagged squares
         elsif square == :f
-          disp_sq = :⚑
+          disp_sq = :⚑.to_s.color(:red)
         elsif square == :m
           disp_sq = :■
         end
 
         if tile_pos == 0
-          tile_str = " %1s" % disp_sq
+          tile_str = " #{disp_sq}"
         else
-          tile_str = " %2s" % disp_sq
+          tile_str = "  #{disp_sq}"
         end
 
         board_str += tile_str
