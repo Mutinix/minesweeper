@@ -114,7 +114,18 @@ class Minesweeper
   end
 
   def done?
-    false
+    if @board.flatten.include?(:m)
+      # there are remaining, unrevealed mines
+      false
+    else # game is over
+      if @board.flatten.include(:M) # player loses
+        @game_over = -1
+      else # player wins
+        @game_over = 1
+      end
+
+      true
+    end
   end
 
   private
