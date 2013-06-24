@@ -41,6 +41,7 @@ class Minesweeper
 
   def play
     until done?
+      print_board
       puts "Do you want to (1) reveal, (2) flag, or (3) unflag?"
       move = gets.to_i
       puts "Which square? (ex: '1,1')"
@@ -123,7 +124,7 @@ class Minesweeper
         elsif square == :m
           disp_sq = :*
         end
-        print disp_sq
+        print "#{disp_sq} "
       end
       print "\n"
     end
@@ -155,4 +156,4 @@ class Minesweeper
   end
 end
 
-#Minesweeper.new.print_board
+Minesweeper.new.play
