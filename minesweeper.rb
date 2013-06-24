@@ -109,7 +109,7 @@ class Minesweeper
     end
 
     print gen_board
-    print disp_highscores
+    disp_highscores
   end
 
   def disp_highscores
