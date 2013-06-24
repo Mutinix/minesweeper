@@ -41,7 +41,7 @@ class Minesweeper
 
   def play
     until done?
-      puts "Do you want to (1) reveal or (2) flag?"
+      puts "Do you want to (1) reveal, (2) flag, or (3) unflag?"
       move = gets.to_i
       puts "Which square? (ex: '1,1')"
       x,y = gets.split(",").map{|coord| coord.to_i}
@@ -51,6 +51,8 @@ class Minesweeper
         reveal(x,y)
       when 2
         flag(x,y)
+      when 3
+        unflag(x,y)
       end
     end
   end
@@ -61,6 +63,17 @@ class Minesweeper
       @board[x][y] = :F
     when :* # incorrectly flagged
       @board[x][y] = :f
+    end
+  end
+
+  def unflag(x,y)
+    # correctly flagged
+    if @board[x][y] == :F
+      @board[x][y] = :m
+    elsif @board[x][y] == :f
+      @board[x][y] = :*
+    else
+      puts "Not a flagged square"
     end
   end
 
@@ -102,8 +115,11 @@ class Minesweeper
   def print_board
     @board.each do |row|
       row.each do |square|
-        if done? || square != :m
+        if done? || ![:f, :m].include?(square)
           disp_sq = square
+        # always show the same symbol for flagged squares
+        elsif square == :f
+          disp_sq = :F
         elsif square == :m
           disp_sq = :*
         end
@@ -114,11 +130,11 @@ class Minesweeper
   end
 
   def done?
-    if @board.flatten.include?(:m)
+    if @board.flatten.any? { |square| [:m, :f].include?(square)}
       # there are remaining, unrevealed mines
       false
     else # game is over
-      if @board.flatten.include(:M) # player loses
+      if @board.flatten.include?(:M) # player loses
         @game_over = -1
       else # player wins
         @game_over = 1
