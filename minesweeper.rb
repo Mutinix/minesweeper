@@ -1,17 +1,30 @@
 require 'set'
 
+# types of squares
+# * - unexplored
+# m - unrevealed mine
+# M - revealed mine
+# F - flagged
+# _ - interior
+# 1 - fringe square
+
 class Minesweeper
-  attr_accessor :board
+  attr_accessor :board, :game_over
 
   def initialize(size=9, mines=10)
+    @game_over = 0
     @board = Array.new
-    mine_locs = rand_n(mines, size**2)
+
+    @mine_locs = rand_n(mines, size**2)
+    @mine_locs.map! do |mine_loc|
+      [mine_loc / size, mine_loc % size]
+    end
 
     size.times do |i|
       @board << []
       size.times do |j|
-        if mine_locs.include?((i+1)*size + (j+1))
-          symbol = :M
+        if @mine_locs.include?([i,j])
+          symbol = :m
         else
           symbol = :*
         end
@@ -37,12 +50,18 @@ class Minesweeper
     end
   end
 
+  def flag(x,y)
+  end
+
+  def reveal(x,y)
+  end
+
   def print_board
     @board.each do |row|
       row.each do |square|
-        if done? || square != :M
+        if done? || square != :m
           disp_sq = square
-        else square == :M
+        elsif square == :m
           disp_sq = :*
         end
         print disp_sq
@@ -52,6 +71,7 @@ class Minesweeper
   end
 
   def done?
+    0
   end
 
   private
