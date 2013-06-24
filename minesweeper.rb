@@ -16,19 +16,24 @@ class Minesweeper
   @@adjacent = [[0,-1], [-1,-1], [-1,0], [-1,1],
                 [0,1], [1,1], [1,0], [1,-1]]
 
-  def initialize(size=9, mines=10)
+  @@num_mines = {9 => 10, 16 => 40}
+
+  def initialize
+    puts "Select a grid size: 9 or 16"
+    @size = gets.to_i
+    mines = @@num_mines[@size]
+
     @game_over = 0
     @board = Array.new
-    @size = size
 
-    @mine_locs = rand_n(mines, size**2)
+    @mine_locs = rand_n(mines, @size**2)
     @mine_locs.map! do |mine_loc|
-      [mine_loc / size, mine_loc % size]
+      [mine_loc / @size, mine_loc % @size]
     end
 
-    size.times do |i|
+    @size.times do |i|
       @board << []
-      size.times do |j|
+      @size.times do |j|
         if @mine_locs.include?([i,j])
           symbol = :m
         else
@@ -149,14 +154,14 @@ class Minesweeper
   end
 
   def gen_board
-    board_str = "   "
-    @size.times {|i| board_str += " #{i}"}
-    board_str += "\n   "
-    board_str += "-" * (@size*2+1)
+    board_str = "    "
+    @size.times {|i| board_str += " %2d" % i}
+    board_str += "\n    "
+    board_str += "-" * (@size*3+1)
     board_str += "\n"
 
     @board.each_with_index do |row,index|
-      board_str += "#{index} |"
+      board_str += "%2d |" % index
       row.each do |square|
         if done? || ![:f, :m].include?(square)
           disp_sq = square
@@ -166,7 +171,7 @@ class Minesweeper
         elsif square == :m
           disp_sq = :*
         end
-        board_str += " #{disp_sq}"
+        board_str += " %2s" % disp_sq
       end
       board_str += "\n"
     end
