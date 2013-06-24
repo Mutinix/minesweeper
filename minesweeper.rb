@@ -4,13 +4,15 @@ require 'set'
 require 'yaml'
 
 # types of squares
-# * - unexplored
-# m - unrevealed mine
-# M - revealed mine
-# F - flagged correctly
-# f - flagged incorrectly
-# _ - interior
-# 1 - fringe square
+# * - unexplored   => ■
+# m - unrevealed mine => 💣
+# M - revealed mine => 💣
+# F - flagged correctly => ⚑
+# f - flagged incorrectly => ⚑
+# _ - interior => □
+# 1 - fringe square => 1 = blue; 2 = green; 3 = red
+#                   => 4 = d blue; 5 = brown; 6 = pale blue
+#                   => 7 = black; 8 = grey
 
 class Minesweeper
   attr_accessor :board, :game_over, :time
