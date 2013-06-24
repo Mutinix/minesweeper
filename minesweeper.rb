@@ -153,7 +153,7 @@ class Minesweeper
   def flag(x,y)
     case @board[x][y]
     when :m # correctly flagged
-      @board[x][y] = :⚐
+      @board[x][y] = :⚑
     when :■ # incorrectly flagged
       @board[x][y] = :f
     else
@@ -163,7 +163,7 @@ class Minesweeper
 
   def unflag(x,y)
     # correctly flagged
-    if @board[x][y] == :⚐
+    if @board[x][y] == :⚑
       @board[x][y] = :m
     elsif @board[x][y] == :f
       @board[x][y] = :■
@@ -197,7 +197,7 @@ class Minesweeper
   def adjacent_mines(x,y)
     @@adjacent.select do |i,j|
       valid_square?(x+i,y+j) &&
-      [:m, :⚐].include?(@board[x+i][y+j])
+      [:m, :⚑].include?(@board[x+i][y+j])
     end
   end
 
