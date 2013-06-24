@@ -196,7 +196,7 @@ class Minesweeper
   def adjacent_mines(x,y)
     @@adjacent.select do |i,j|
       valid_square?(x+i,y+j) &&
-      @board[x+i][y+j] == :m
+      [:m, :F].include?(@board[x+i][y+j])
     end
   end
 
