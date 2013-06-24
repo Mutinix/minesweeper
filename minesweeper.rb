@@ -225,7 +225,7 @@ class Minesweeper
           end
         # always show the same symbol for flagged squares
         elsif square == :f
-          disp_sq = :⚐
+          disp_sq = :⚑
         elsif square == :m
           disp_sq = :■
         end
