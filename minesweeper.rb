@@ -58,7 +58,7 @@ class Minesweeper
 
   def play
     until done?
-      print_board
+      print gen_board
       puts "Do you want to (1) reveal, (2) flag, (3) unflag, (4) save your game, (5) load your game, or (6) quit?"
       move = gets.to_i
       unless move > 3
@@ -88,7 +88,7 @@ class Minesweeper
       puts "You lose!"
     end
 
-    print_board
+    print gen_board
   end
 
   def flag(x,y)
@@ -148,8 +148,15 @@ class Minesweeper
     end.include?(false)
   end
 
-  def print_board
-    @board.each do |row|
+  def gen_board
+    board_str = "   "
+    @size.times {|i| board_str += " #{i}"}
+    board_str += "\n   "
+    board_str += "-" * (@size*2+1)
+    board_str += "\n"
+
+    @board.each_with_index do |row,index|
+      board_str += "#{index} |"
       row.each do |square|
         if done? || ![:f, :m].include?(square)
           disp_sq = square
@@ -159,10 +166,11 @@ class Minesweeper
         elsif square == :m
           disp_sq = :*
         end
-        print "#{disp_sq} "
+        board_str += " #{disp_sq}"
       end
-      print "\n"
+      board_str += "\n"
     end
+    board_str
   end
 
   def done?
