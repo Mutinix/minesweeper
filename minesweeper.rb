@@ -101,12 +101,52 @@ class Minesweeper
     @time[1] = Time.new
 
     if @game_over == 1
-      puts "You win! It took #{@time[1]-@time[0]} seconds!"
+      puts "You win! It took #{@time.reverse.inject(:-)} seconds!"
+      highscores
     else
       puts "You lose!"
     end
 
     print gen_board
+    print disp_highscores
+  end
+
+  def disp_highscores
+    highscorefilename = "highscores-#{@size}"
+    if(File.exists?(highscorefilename))
+      highscorefile = File.open(highscorefilename)
+      highscores = YAML::load(highscorefile)
+      puts "HIGHSCORES"
+      puts "Name \tTime"
+      highscores.each do |name, time|
+        puts "#{name} \t#{time}"
+      end
+    end
+  end
+
+  def highscores
+    highscorefilename = "highscores-#{@size}"
+
+    if(File.exists?(highscorefilename))
+      highscorefile = File.open(highscorefilename)
+      highscores = YAML::load(highscorefile)
+    else
+      highscores = []
+    end
+
+
+    if highscores == [] || @time.reverse.inject(:-) > highscores.last.last
+      puts "Enter your name: "
+      player_name = gets.chomp
+
+      highscores << [player_name, @time.reverse.inject(:-)]
+      highscores.sort! {|a, b| a[1] <=> b[1]}
+      highscores.pop if highscores.length == 11
+
+      highscorefile = File.new(highscorefilename, "w")
+      highscorefile.write(highscores.to_yaml)
+      highscorefile.close
+    end
   end
 
   def flag(x,y)
