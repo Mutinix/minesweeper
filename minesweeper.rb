@@ -18,6 +18,7 @@ class Minesweeper
   def initialize(size=9, mines=10)
     @game_over = 0
     @board = Array.new
+    @size = size
 
     @mine_locs = rand_n(mines, size**2)
     @mine_locs.map! do |mine_loc|
@@ -75,12 +76,11 @@ class Minesweeper
         @@adjacent.each do |adj_arr|
           # only recurse on unexplored squares
           if @board[x+adj_arr[0]][y+adj_arr[1]] == "*"
-            puts "RECURSED"
             reveal(x+adj_arr[0], y+adj_arr[1], false)
           end
         end
       else
-        @board[x][y] = adj_mine_locs.length.to_s
+        @board[x][y] = adj_mine_locs.length
       end
     end
     #else recursively reveal that square and all adjacent ones
@@ -91,7 +91,13 @@ class Minesweeper
     @@adjacent.each do |adj_arr|
       i,j = adj_arr
 
-      if @board[x+i][y+j] == :m
+      puts "checking location #{x+i},#{y+j}"
+      #if x+i < size && y+j < size &&
+      #  x+i >= 0 && y+j >= 0
+      if (0...@size).member?(x+i) &&
+         (0...@size).member?(y+j) &&
+         @board[x+i][y+j] == :m
+
         adj_mine_locs << [x+i, y+j]
       end
     end
@@ -113,7 +119,7 @@ class Minesweeper
   end
 
   def done?
-    0
+    false
   end
 
   private
@@ -127,4 +133,4 @@ class Minesweeper
   end
 end
 
-Minesweeper.new.print_board
+#Minesweeper.new.print_board
