@@ -9,7 +9,7 @@ class Minesweeper
     size.times do |i|
       @board << []
       size.times do |j|
-        @board.last << "*"
+        @board.last << :*
       end
     end
   end
