@@ -1,3 +1,4 @@
+# encoding: UTF-8
 require 'set'
 require 'yaml'
 
@@ -38,7 +39,7 @@ class Minesweeper
         if @mine_locs.include?([i,j])
           symbol = :m
         else
-          symbol = :*
+          symbol = :■
         end
 
         @board.last << symbol
@@ -152,8 +153,8 @@ class Minesweeper
   def flag(x,y)
     case @board[x][y]
     when :m # correctly flagged
-      @board[x][y] = :F
-    when :* # incorrectly flagged
+      @board[x][y] = :⚐
+    when :■ # incorrectly flagged
       @board[x][y] = :f
     else
       puts "You can't flag this square"
@@ -162,10 +163,10 @@ class Minesweeper
 
   def unflag(x,y)
     # correctly flagged
-    if @board[x][y] == :F
+    if @board[x][y] == :⚐
       @board[x][y] = :m
     elsif @board[x][y] == :f
-      @board[x][y] = :*
+      @board[x][y] = :■
     else
       puts "Not a flagged square"
     end
@@ -179,10 +180,10 @@ class Minesweeper
     else # recursively reveal that square and all adjacent ones
       adj_mine_locs = adjacent_mines(x,y)
       if adj_mine_locs.empty?
-        @board[x][y] = :_
+        @board[x][y] = :□
         @@adjacent.each do |i, j|
           # only recurse on unexplored squares
-          if valid_square?(x+i,y+j) && @board[x+i][y+j] == :*
+          if valid_square?(x+i,y+j) && @board[x+i][y+j] == :■
             reveal(x+i, y+j, false)
           end
         end
@@ -196,7 +197,7 @@ class Minesweeper
   def adjacent_mines(x,y)
     @@adjacent.select do |i,j|
       valid_square?(x+i,y+j) &&
-      [:m, :F].include?(@board[x+i][y+j])
+      [:m, :⚐].include?(@board[x+i][y+j])
     end
   end
 
@@ -207,27 +208,40 @@ class Minesweeper
   end
 
   def gen_board
-    board_str = "    "
+    board_str = "   "
     @size.times {|i| board_str += " %2d" % i}
-    board_str += "\n    "
-    board_str += "-" * (@size*3+1)
-    board_str += "\n"
+    board_str += "\n   ┌"
+    board_str += "─" * (@size*3)
+    board_str += "┐\n"
 
     @board.each_with_index do |row,index|
-      board_str += "%2d |" % index
-      row.each do |square|
+      board_str += "%2d │" % index
+      row.each_with_index do |square, tile_pos|
         if done? || ![:f, :m].include?(square)
-          disp_sq = square
+          if square == :m
+            disp_sq = "💣"
+          else
+            disp_sq = square
+          end
         # always show the same symbol for flagged squares
         elsif square == :f
-          disp_sq = :F
+          disp_sq = :⚐
         elsif square == :m
-          disp_sq = :*
+          disp_sq = :■
         end
-        board_str += " %2s" % disp_sq
+
+        if tile_pos == 0
+          tile_str = " %1s" % disp_sq
+        else
+          tile_str = " %2s" % disp_sq
+        end
+
+        board_str += tile_str
       end
-      board_str += "\n"
+      board_str += " │\n"
     end
+    board_str += " "*3 + "└" + "─" * (@size*3) + "┘\n"
+
     board_str
   end
 
