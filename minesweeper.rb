@@ -1,7 +1,17 @@
 # encoding: UTF-8
-require 'rainbow'
+#require 'rainbow'
 require 'set'
 require 'yaml'
+
+# REV: I like what your code does, in general
+# it's clean, but could use some refactoring
+# I think a few methods got a little lengthy
+# other than that I don't think I had much
+# that was valuable to say...
+# I made one long comment about reveal
+# nothing was wrong, just shared an alternative
+# the code was awesome!
+# great job! :)
 
 # types of squares
 # * - unexplored   => ■
@@ -22,6 +32,10 @@ class Minesweeper
 
   @@num_mines = {9 => 10, 16 => 40}
 
+  # REV: initialize is taking care of a lot it may
+  # have been nice to make a 'set_game' method
+  # just to keep your method a little shorter and
+  # easier to read
   def initialize
     puts "Select a grid size: 9 or 16"
     @size = gets.to_i
@@ -50,6 +64,8 @@ class Minesweeper
     end
   end
 
+  # REV: adjusting for time on saves,
+  # awesome...
   def write_to_file
     puts "Enter filename"
     filename = gets.chomp
@@ -74,6 +90,11 @@ class Minesweeper
     @time[0] = Time.new - YAML::load(timefile)
   end
 
+  # REV: again even if play isn't very heavy,
+  # it can be sectioned off a little bit into 
+  # smaller methods. like the way you did it for
+  # gen_board and disp_highscores
+  # Just for the sake of making it super readable.
   def play
     @time[0] = Time.new
 
@@ -103,7 +124,7 @@ class Minesweeper
     end
 
     @time[1] = Time.new
-
+    
     if @game_over == 1
       puts "You win! It took #{@time.reverse.inject(:-)} seconds!"
       highscores
@@ -152,7 +173,10 @@ class Minesweeper
       highscorefile.close
     end
   end
-
+  
+  # REV: Since flagging and unflagging are so similar
+  # you could have combined the methods as a single
+  # flag method that toggles the flag
   def flag(x,y)
     case @board[x][y]
     when :m # correctly flagged
@@ -174,7 +198,18 @@ class Minesweeper
       puts "Not a flagged square"
     end
   end
-
+  
+  # REV: recursion is cool
+  
+  # the way it's written the @@adjacent.each is going 
+  # through all adjacent (+1,-1) possibilities
+  # if it were done by spreading out bfs style
+  # by taking a position and then adding valid adjacents
+  # to a working array that you'll 'shift' the first from
+  # and a visited array that will help select from adjacents
+  # you would avoid going through certain elements
+  # this is really not necessary but a cool tool I thought
+  # I'd mention :)
   def reveal(x, y, first=true)
     #if mine then end
     if @board[x][y] == :m
@@ -210,6 +245,7 @@ class Minesweeper
     end.include?(false)
   end
 
+  # REV: again a really long method
   def gen_board
     board_str = "   "
     @size.times {|i| board_str += " %2d" % i}
@@ -228,7 +264,7 @@ class Minesweeper
           end
         # always show the same symbol for flagged squares
         elsif square == :f
-          disp_sq = :⚑.to_s.color(:red)
+          disp_sq = :⚑#.to_s.color(:red)
         elsif square == :m
           disp_sq = :■
         end
